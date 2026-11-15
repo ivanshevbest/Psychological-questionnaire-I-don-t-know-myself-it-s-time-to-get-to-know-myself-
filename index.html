@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Психологическая анкета</title>
+    <style>
+        :root {
+            --bg-color: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px 80px 20px;
+            color: #333;
+            background-color: var(--bg-color);
+            transition: background-color 0.4s ease;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 1.6em;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 15px;
+            line-height: 1.3;
+        }
+
+        h1 span {
+            font-size: 0.75em;
+            font-weight: normal;
+            display: block;
+            margin-top: 5px;
+            color: #555;
+        }
+
+        /* Блок инструкции */
+        .instructions {
+            background-color: rgba(0, 0, 0, 0.03);
+            border-left: 4px solid #4a90e2;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .instructions p {
+            margin: 0 0 10px 0;
+        }
+
+        .instructions p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Выбор фона */
+        .bg-selector {
+            margin-bottom: 30px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .bg-selector span {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .bg-circles {
+            display: flex;
+            gap: 10px;
+        }
+
+        .bg-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform 0.2s, border-color 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .bg-circle:hover {
+            transform: scale(1.15);
+        }
+
+        .bg-circle.active {
+            border-color: #333;
+            transform: scale(1.15);
+        }
+
+        /* Вопросы */
+        .question-block {
+            margin-bottom: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+
+        .question-text {
+            font-weight: 500;
+            margin-right: 5px;
+            white-space: nowrap;
+        }
+
+        .answer-input {
+            flex: 1;
+            min-width: 200px;
+            border: none;
+            border-bottom: 1px solid #333;
+            outline: none;
+            font-size: 16px;
+            font-family: inherit;
+            color: #000;
+            background: transparent;
+            padding: 0 5px;
+            margin-top: 5px;
+        }
+
+        .answer-input:focus {
+            border-bottom: 2px solid #000;
+        }
+
+        /* Кнопка скачивания (внизу) */
+        .download-wrapper {
+            text-align: center;
+            margin-top: 50px;
+            position: relative;
+        }
+
+        .arrow-hint {
+            font-size: 36px;
+            position: absolute;
+            top: -45px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 1.5s infinite;
+            color: #4a90e2;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-10px); }
+        }
+
+        .download-btn {
+            display: inline-block;
+            padding: 15px 40px;
+            background: linear-gradient(90deg, #4a90e2, #e26ab5, #4a90e2);
+            background-size: 200% auto;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            animation: shimmer 3s linear infinite;
+            transition: transform 0.2s;
+        }
+
+        .download-btn:hover {
+            transform: scale(1.03);
+        }
+
+        @keyframes shimmer {
+            to { background-position: 200% center; }
+        }
+
+        /* Футер */
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 14px;
+            color: #777;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0,0,0,0.1);
+        }
+
+        /* Уведомление */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background-color: #333;
+            color: #fff;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 1000;
+            text-align: center;
+            max-width: 90%;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        @media print {
+            .download-wrapper, .bg-selector, .instructions, .footer, .arrow-hint { display: none; }
+            body { background: #fff !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>
+        Психологическая анкета
+        <span>«Я себя не знаю — пора познакомиться с собой»</span>
+    </h1>
+
+    <div class="instructions">
+        <p><strong>Инструкция:</strong></p>
+        <p>Перед вами анкета, состоящая из вопросов. Вам нужно на них ответить. Касайтесь строчек, чтобы вписывать ваши ответы.</p>
+        <p>В конце заполнения всей анкеты нажмите кнопку внизу, чтобы скачать заполненную анкету в формате документа Word, а затем распечатать её.</p>
+        <p><em>Также вы можете выбрать фон, на котором вам будет приятно заполнять анкету (на документ Word это не повлияет).</em></p>
+    </div>
+
+    <div class="bg-selector">
+        <span>Выберите фон:</span>
+        <div class="bg-circles">
+            <div class="bg-circle active" style="background-color: #ffffff;" data-color="#ffffff" title="Белый"></div>
+            <div class="bg-circle" style="background-color: #e8f5e9;" data-color="#e8f5e9" title="Приятный зелёный"></div>
+            <div class="bg-circle" style="background-color: #f5f0e1;" data-color="#f5f0e1" title="Бежевый"></div>
+        </div>
+    </div>
+
+    <div id="form-container"></div>
+
+    <div class="download-wrapper">
+        <div class="arrow-hint">👇</div>
+        <button class="download-btn" onclick="exportToWord()">Скачать анкету в формате Word</button>
+    </div>
+
+    <div class="footer">
+        © Вахрушев И. Г. <span id="copyright-year"></span>
+    </div>
+
+    <div id="toast" class="toast">Спасибо! Файл скачан. Теперь он находится в загрузках браузера. Теперь вы можете его распечатать.</div>
+
+    <script>
+        // Список вопросов
+        const questions = [
+            "Кто Я?", "я верю в", "я сомневаюсь в", "цель моей жизни",
+            "что для меня самое важное, что я ценю больше своей жизни",
+            "мои привязанности", "мои удовольствия", "мои страхи",
+            "меня радует", "меня огорчает", "мне хорошо, когда",
+            "мне плохо, когда", "мне интересно в жизни", "я счастлив, когда",
+            "для меня любовь - это", "я раздражаюсь, когда",
+            "я обижаюсь на близких, когда", "я благодарен близким, когда",
+            "мой самый важный жизненный опыт, когда",
+            "я сам себе проблема, когда", "я проблема для других, когда",
+            "я делаю злые дела, когда", "для меня сейчас самое главное",
+            "что я хочу от себя", "буду сожалеть, если я",
+            "буду радоваться, если я", "что во мне самое ценное",
+            "что во мне самое ненужное", "я ценю в людях",
+            "мне не нравятся в людях", "как я отношусь к себе",
+            "моя мечта", "меня раздражает в близких",
+            "меня радует, если мои близкие", "какой момент жизни изменил меня",
+            "я больше живу для себя или для других", "мне не хватает для счастья",
+            "каким человеком я хочу быть", "чтобы улучшить свою жизнь я",
+            "я наношу себе вред, когда", "я приношу себе пользу, когда",
+            "мои жизненные ценности", "какие мысли мне мешают",
+            "на моё настроение влияют", "я убеждён в том, что",
+            "я ненавижу", "я люблю", "я никогда не буду",
+            "в будущем я вижу себя", "я всегда буду"
+        ];
+
+        const container = document.getElementById('form-container');
+
+        // Генерация полей
+        questions.forEach((q) => {
+            const div = document.createElement('div');
+            div.className = 'question-block';
+            const label = document.createElement('span');
+            label.className = 'question-text';
+            label.textContent = `- ${q} `;
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'answer-input';
+            input.autocomplete = 'off';
+            div.appendChild(label);
+            div.appendChild(input);
+            container.appendChild(div);
+        });
+
+        // Автоматический год в копирайте
+        document.getElementById('copyright-year').textContent = new Date().getFullYear();
+
+        // Выбор фона
+        const circles = document.querySelectorAll('.bg-circle');
+        circles.forEach(circle => {
+            circle.addEventListener('click', () => {
+                circles.forEach(c => c.classList.remove('active'));
+                circle.classList.add('active');
+                document.documentElement.style.setProperty('--bg-color', circle.dataset.color);
+            });
+        });
+
+        // Экспорт в Word
+        function exportToWord() {
+            const blocks = document.querySelectorAll('.question-block');
+            let htmlContent = `
+                <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+                <head>
+                    <meta charset="utf-8">
+                    <title>Психологическая анкета</title>
+                    <style>
+                        body { font-family: 'Times New Roman', Times, serif; font-size: 14pt; line-height: 1.6; color: #000; }
+                        h1 { text-align: center; font-size: 16pt; margin-bottom: 20px; }
+                        .q-block { margin-bottom: 12px; }
+                        .q-text { font-weight: bold; }
+                        .q-answer { font-style: italic; padding-left: 5px; }
+                        .q-empty { border-bottom: 1px solid #000; display: inline-block; min-width: 250px; }
+                    </style>
+                </head>
+                <body>
+                    <h1>Психологическая анкета<br>«Я себя не знаю — пора познакомиться с собой»</h1>
+            `;
+
+            blocks.forEach(block => {
+                const qText = block.querySelector('.question-text').textContent;
+                const aValue = block.querySelector('.answer-input').value.trim();
+                
+                if (aValue === '') {
+                    // Если ответа нет — рисуем линию
+                    htmlContent += `
+                        <div class="q-block">
+                            <span class="q-text">${qText}</span>
+                            <span class="q-empty">&nbsp;</span>
+                        </div>`;
+                } else {
+                    // Если ответ есть — жирный вопрос + курсивный ответ
+                    htmlContent += `
+                        <div class="q-block">
+                            <span class="q-text">${qText}</span>
+                            <span class="q-answer">${aValue}</span>
+                        </div>`;
+                }
+            });
+
+            htmlContent += `</body></html>`;
+
+            // Скачивание файла
+            const blob = new Blob(['\ufeff', htmlContent], { type: 'application/msword' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'Психологическая_анкета.doc';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+
+            // Показ уведомления
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 6000);
+        }
+    </script>
+
+</body>
+</html>
